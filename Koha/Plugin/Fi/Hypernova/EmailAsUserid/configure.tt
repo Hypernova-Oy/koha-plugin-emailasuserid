@@ -1,0 +1,34 @@
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: EmailAsUserid: Configuration</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; EmailAsUserid &rsaquo; Configuration</div>
+
+<div id="doc3">
+  <h3>Koha: EmailAsUserid Plugin: Configuration</h3>
+
+  <form method="post" action="/cgi-bin/koha/plugins/run.pl">
+    [% INCLUDE 'csrf-token.inc' %]
+    <input type="hidden" name="class" value="[% CLASS %]"/>
+    <input type="hidden" name="method" value="configure"/>
+
+    <legend>Configuration</legend>
+    <p>Enable the plugin by checking the boxes below.</p>
+    <p>Note: This plugin will not change existing userids, only new users created after enabling the plugin.</p>
+    <p>Note: If you enable this plugin, you will not be able to use the email address as a login for existing users.</p>
+    <p>Note: If you disable this plugin, existing users will still have their email address as their userid, but new users will not.</p>
+    <input type="checkbox" name="email" id="email" value="1" [% IF enabled %]checked="checked"[% END %]>
+    <label for="email"> Email</label><br>
+    <input type="checkbox" name="uid" id="uid" value="1" [% IF enabled %]checked="checked"[% END %]>
+    <label for="uid"> Userid</label><br>
+    <input type="checkbox" name="card" id="card" value="1" [% IF enabled %]checked="checked"[% END %]>
+    <label for="card"> Card</label><br>
+
+    <input type="submit" value="Submit">
+  </form>
+</div>
+[% INCLUDE 'intranet-bottom.inc' %]
