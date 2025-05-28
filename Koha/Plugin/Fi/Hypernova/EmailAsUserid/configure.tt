@@ -18,9 +18,11 @@
     <input type="hidden" name="save" value="1"/>
 
     <fieldset>
-      <legend>Force userid</legend>
+      <legend>Features</legend>
       <input type="checkbox" name="force_email" id="force_email" value="1" [% IF config.force_email %]checked="checked"[% END %]>
       <label for="force_email"> Force email as userid</label><br>
+      <input type="checkbox" name="pending_self_registrations" id="pending_self_registrations" value="1" [% IF config.pending_self_registrations %]checked="checked"[% END %]>
+      <label for="pending_self_registrations"> Show pending self-registrations in the intranet frontpage</label><br>
     </fieldset>
     <fieldset>
       <legend>OPAC identification method</legend>

@@ -27,7 +27,7 @@ use JSON::XS;
 
 sub new {
   my ($class, $args) = @_;
-  $args = {force_email => 1, email => 1} unless ($args && ref($args) eq 'HASH');
+  $args = {force_email => 1, email => 1, pending_self_registrations => 1} unless ($args && ref($args) eq 'HASH');
   my $self = bless($args, $class);
 
   return $self;
@@ -39,6 +39,13 @@ sub newFromCGI {
   $args->{force_email} = $cgi->param('force_email') ? 1 : 0;
   $args->{card}  = $cgi->param('card') ? 1 : 0;
   $args->{email} = $cgi->param('email') ? 1 : 0;
+  $args->{pending_self_registrations} = $cgi->param('pending_self_registrations') ? 1 : 0;
+
+  if ($args->{pending_self_registrations}) {
+    unless(C4::Context->preference('PatronSelfRegistrationDefaultCategory')) {
+      die "Koha::Plugin::Fi::Hypernova::EmailAsUserid:> You must set the preference 'PatronSelfRegistrationDefaultCategory' to use pending_self_registrations.";
+    }
+  }
 
   return $class->new($args);
 }
@@ -55,6 +62,10 @@ sub asJavascript {
   return
     "const kpfheauid_config = {\n".
     "  card: ".($self->{card} ? 'true' : 'false').",\n".
+    ($self->{pending_self_registrations} ?
+      "  pending_self_registrations_categorycode: '".C4::Context->preference('PatronSelfRegistrationDefaultCategory')."',\n" :
+      ""
+    ).
     "};\n";
 }
 
