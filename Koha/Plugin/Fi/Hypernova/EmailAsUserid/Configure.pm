@@ -37,6 +37,7 @@ sub configure {
       $config = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromCGI($cgi);
       $config->store($plugin);
       C4::Log::logaction('EmailAsUserid', 'configure', undef, $config->serialize(), undef, undef);
+      $plugin->loadAssets(); #Reload assets to get the new config
     }
 
     $template->param(

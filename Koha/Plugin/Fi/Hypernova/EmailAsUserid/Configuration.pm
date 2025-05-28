@@ -21,6 +21,9 @@ use Modern::Perl;
 use strict;
 use warnings;
 
+use YAML::XS;
+use JSON::XS;
+
 sub new {
   my ($class, $args) = @_;
   $args = {} unless ($args && ref($args) eq 'HASH');
@@ -32,9 +35,9 @@ sub new {
 sub newFromCGI {
   my ($class, $cgi) = @_;
   my $args = {};
-  $args->{card}  = $cgi->param('card');
-  $args->{email} = $cgi->param('email');
-  $args->{uid}   = $cgi->param('uid');
+  $args->{force_email} = $cgi->param('force_email') ? 1 : 0;
+  $args->{card}  = $cgi->param('card') ? 1 : 0;
+  $args->{email} = $cgi->param('email') ? 1 : 0;
 
   return $class->new($args);
 }
@@ -44,6 +47,14 @@ sub newFromDatabase {
   my $serialized = $plugin->retrieve_data('config');
   return $class->deserialize($serialized) if $serialized;
   return $class->new();
+}
+
+sub asJavascript {
+  my ($self) = @_;
+  return
+    "const kpfheauid_config = {\n".
+    "  card: ".($self->{card} ? 'true' : 'false').",\n".
+    "};\n";
 }
 
 sub serialize {

@@ -16,17 +16,18 @@
     <input type="hidden" name="class" value="[% CLASS %]"/>
     <input type="hidden" name="method" value="configure"/>
 
-    <legend>Configuration</legend>
-    <p>Enable the plugin by checking the boxes below.</p>
-    <p>Note: This plugin will not change existing userids, only new users created after enabling the plugin.</p>
-    <p>Note: If you enable this plugin, you will not be able to use the email address as a login for existing users.</p>
-    <p>Note: If you disable this plugin, existing users will still have their email address as their userid, but new users will not.</p>
-    <input type="checkbox" name="email" id="email" value="1" [% IF enabled %]checked="checked"[% END %]>
-    <label for="email"> Email</label><br>
-    <input type="checkbox" name="uid" id="uid" value="1" [% IF enabled %]checked="checked"[% END %]>
-    <label for="uid"> Userid</label><br>
-    <input type="checkbox" name="card" id="card" value="1" [% IF enabled %]checked="checked"[% END %]>
-    <label for="card"> Card</label><br>
+    <fieldset>
+      <legend>Force userid</legend>
+      <input disabled type="checkbox" name="force_email" id="force_email" value="1" [% IF force_email %]checked="checked"[% END %]>
+      <label for="force_email"> Force email as userid</label><br>
+    </fieldset>
+    <fieldset>
+      <legend>OPAC identification method</legend>
+      <input disabled type="checkbox" name="email" id="email" value="1" [% IF enabled %]checked="checked"[% END %]>
+      <label for="email"> Email</label><br>
+      <input type="checkbox" name="card" id="card" value="1" [% IF enabled %]checked="checked"[% END %]>
+      <label for="card"> Card</label><br>
+    </fieldset>
 
     <input type="submit" value="Submit">
   </form>

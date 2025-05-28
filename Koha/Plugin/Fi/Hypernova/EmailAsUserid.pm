@@ -28,6 +28,7 @@ use YAML;
 use Try::Tiny;
 
 use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configure;
+use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration;
 
 our $VERSION = '0.0.1'; #PLACEHOLDER
 our $DATE_UPDATED = '2025-05-28'; #PLACEHOLDER
@@ -58,10 +59,26 @@ sub new {
   my $self = $class->SUPER::new($args);
   $self->{cgi} = CGI->new() unless $self->{cgi};
 
-  # Load assets
-  $assets{'opac-memberentry.pl'} = File::Slurp::read_file($class->_absPath('js/opac-memberentry.pl.js'));
+  $self->loadAssets();
 
   return $self;
+}
+
+sub loadAssets {
+  my ($self) = @_;
+  $assets{'opac'} =
+    "<script>\n".
+    Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($self)->asJavascript()."\n".
+    File::Slurp::read_file($self->_absPath('js/lib.js'))."\n".
+    File::Slurp::read_file($self->_absPath('js/opac.js'))."\n".
+    "</script>\n";
+
+  $assets{'/cgi-bin/koha/members/memberentry.pl'} =
+    "<script>\n".
+    Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($self)->asJavascript()."\n".
+    File::Slurp::read_file($self->_absPath('js/lib.js'))."\n".
+    File::Slurp::read_file($self->_absPath('js/memberentry.js'))."\n".
+    "</script>\n";
 }
 
 sub install { return 1; }
@@ -89,14 +106,20 @@ Generates JavaScript to bind the email field as the user ID field in the patron 
 
 sub intranet_js {
   my ($self) = @_;
-  my $cgi = $self->{'cgi'};
-  warn $cgi->script_name;
-  die $cgi->script_name;
-
-  return $assets{$cgi->script_name};
+  return $assets{$self->{'cgi'}->script_name};
 }
 
+=head2 opac_js
 
+@IMPLEMENTS Koha::Plugins hook 'opac_js'
+Generates JavaScript to bind the email field as the user ID field in the patron forms.
+
+=cut
+
+sub opac_js {
+  my ($self) = @_;
+  return $assets{'opac'};
+}
 
 sub _absPath {
   my ($self, $file) = @_;

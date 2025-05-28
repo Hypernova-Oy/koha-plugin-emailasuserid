@@ -1,3 +1,5 @@
+//Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/opac.js
+
 let kpfheauid_bopr = document.querySelector('body#opac-patron-registration');
 if (kpfheauid_bopr) {
   document.addEventListener("DOMContentLoaded", function () {
@@ -39,9 +41,7 @@ if (kpfheauid_bopu) {
 let kpfheauid_localLogins = document.querySelectorAll('div.local-login');
 if (kpfheauid_localLogins) {
   document.addEventListener("DOMContentLoaded", function () {
-    let useridTranslation = "Email or card number";
-    if (document.documentElement.lang === "fi-FI") { useridTranslation = "Sähköposti tai kirjastokortin numero"; }
-    else if (document.documentElement.lang === "sv-SE") { useridTranslation = "E-post eller lånekortsnummer"; }
+    let useridTranslation = kpfheauid_getUseridFieldTranslation();
     kpfheauid_localLogins.forEach((oull) => {
       let userid = oull.querySelector('label[for=userid]');
       if (userid) { userid.innerHTML = useridTranslation; }

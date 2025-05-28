@@ -67,7 +67,7 @@ our %DEFAULTS = (
   'REMOTE_PORT' => '0',
   'HTTP_ACCEPT' => '*/*',
   'HTTP_X_FORWARDED_HOST' => 'koha.example.com',
-  'REQUEST_URI' => '/intranet/plugins/run.pl?class=Koha%3A%3APlugin%3A%3AFi%3A%3AHypernova%3A%3AValueBuilder&method=configure',
+  'REQUEST_URI' => '/intranet/plugins/run.pl?class=Koha%3A%3APlugin%3A%3AFi%3A%3AHypernova%3A%3AEmailAsUserid&method=configure',
   'REMOTE_ADDR' => '127.0.0.1',
   'REQUEST_METHOD' => 'GET',
 );
