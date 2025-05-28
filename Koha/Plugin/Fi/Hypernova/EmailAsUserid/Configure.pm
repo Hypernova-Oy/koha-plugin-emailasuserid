@@ -21,33 +21,34 @@ use Modern::Perl;
 use strict;
 use warnings;
 
+use C4::Log;
+use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration;
+
 #Controller
 sub configure {
   my ($plugin, $args) = @_;
   my $cgi = $plugin->{'cgi'};
 
-  my $template = $plugin->get_template( { file => $plugin->_absPath('configure.tt') } );
+  eval {
+    my $template = $plugin->get_template( { file => $plugin->_absPath('configure.tt') } );
 
-  if (my $login_method = $cgi->param('login_method')) {
-    if ($login_method =~ /^(?:email|uid|card)$/) {
-      $plugin->set_config('login_method', $login_method);
-    } else {
-      $plugin->set_config('login_method', 'email');
+    my $config = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($plugin);
+    if ($cgi->param('save')) {
+      $config = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromCGI($cgi);
+      $config->store($plugin);
+      C4::Log::logaction('EmailAsUserid', 'configure', undef, $config->serialize(), undef, undef);
     }
+
+    $template->param(
+      config => $config,
+    );
+
+    $plugin->output_html( $template->output(), 200 );
+  };
+  if ($@) {
+    warn 'Koha::Plugin::Fi::Hypernova::EmailAsUserid:> '.$@;
+    $plugin->output_html( $@, 500 );
   }
-
-  $plugin->store_data({
-    login_method => $login_method,
-  });
-
-  $template->param(
-    available_subroutines => Koha::Plugin::Fi::Hypernova::ValueBuilder::Builder::Subroutine::ListAvailable(),
-    available_triggers => Koha::Plugin::Fi::Hypernova::ValueBuilder::Builder::Trigger::ListAvailable(),
-    item_marc_subfield_structures => GetMARCFrameworkSubfields('', '952'),
-    valuebuilders => Koha::Plugin::Fi::Hypernova::ValueBuilder::ValueBuilders->new($plugin)->retrieveAll,
-  );
-
-  $plugin->output_html( $template->output(), 200 );
   return 1;
 }
 

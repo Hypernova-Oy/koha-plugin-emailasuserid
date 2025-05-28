@@ -27,6 +27,8 @@ use Mojo::JSON qw(decode_json);
 use YAML;
 use Try::Tiny;
 
+use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configure;
+
 our $VERSION = '0.0.1'; #PLACEHOLDER
 our $DATE_UPDATED = '2025-05-28'; #PLACEHOLDER
 
@@ -57,12 +59,13 @@ sub new {
   $self->{cgi} = CGI->new() unless $self->{cgi};
 
   # Load assets
-  $assets{'opac-memberentry.pl'} = File::Slurp::read_file(File::Spec->catfile(File::Basename::dirname($INC{$package}), '/EmailAsUserid/js/opac-memberentry.pl.js'));
-  $assets{'opac-memberentry.pl'} = File::Slurp::read_file($package->_absPath('EmailAsUserid/js/opac-memberentry.pl.js'));
+  $assets{'opac-memberentry.pl'} = File::Slurp::read_file($class->_absPath('js/opac-memberentry.pl.js'));
 
   return $self;
 }
 
+sub install { return 1; }
+sub uninstall { return 1; }
 sub configure { return Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configure::configure(@_); }
 
 =head2 patron_generate_userid
@@ -98,7 +101,7 @@ sub intranet_js {
 sub _absPath {
   my ($self, $file) = @_;
 
-  return Cwd::abs_path($plugin->mbf_path($file));
+  return Cwd::abs_path($self->mbf_path($file));
 }
 
 1;
