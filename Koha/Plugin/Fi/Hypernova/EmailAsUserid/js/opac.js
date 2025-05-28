@@ -50,3 +50,24 @@ if (kpfheauid_localLogins) {
     });
   });
 }
+
+let kpfheauid_passwordRecovery = document.querySelector('body#opac-password-recovery div#password-recovery');
+if (kpfheauid_passwordRecovery) {
+  if (! kpfheauid_config.card) {
+    let cardInput = kpfheauid_passwordRecovery.querySelector('.form-group:nth-of-type(1)');
+    if (cardInput) {
+      cardInput.style.display = 'none';
+    }
+
+    let paragraph = kpfheauid_passwordRecovery.querySelector('form p:nth-of-type(1)');
+    if (paragraph) {
+      if (document.documentElement.lang === "en") {
+        paragraph.innerHTML = "To reset your password, enter your email address.";
+      } else if (document.documentElement.lang === "fi-FI") {
+        paragraph.innerHTML = "Palauttaaksesi salasanasi, anna sähköpostiosoite.";
+      } else if (document.documentElement.lang === "sv-SE") {
+        paragraph.innerHTML = "För att återställa ditt lösenord, ange din e-postadress.";
+      }
+    }
+  }
+}
