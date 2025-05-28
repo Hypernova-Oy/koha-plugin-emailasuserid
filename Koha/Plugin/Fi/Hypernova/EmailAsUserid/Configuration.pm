@@ -22,11 +22,12 @@ use strict;
 use warnings;
 
 use YAML::XS;
+$YAML::XS::LoadBlessed = 1;
 use JSON::XS;
 
 sub new {
   my ($class, $args) = @_;
-  $args = {} unless ($args && ref($args) eq 'HASH');
+  $args = {force_email => 1, email => 1} unless ($args && ref($args) eq 'HASH');
   my $self = bless($args, $class);
 
   return $self;
@@ -61,7 +62,7 @@ sub serialize {
   my ($self) = @_;
   return YAML::XS::Dump($self);
 }
-sub Deserialize {
+sub deserialize {
   my ($class, $yamlString) = @_;
   return YAML::XS::Load($yamlString);
 }

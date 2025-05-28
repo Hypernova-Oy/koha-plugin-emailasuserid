@@ -33,6 +33,7 @@ use Test::Deep;
 use Test::Mojo;
 
 use Koha::Plugin::Fi::Hypernova::EmailAsUserid;
+use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration;
 
 use t::Lib qw(Koha::Plugin::Fi::Hypernova::EmailAsUserid);
 
@@ -40,7 +41,7 @@ use HTTP::Request::Common qw();
 use HTTP::Headers;
 
 subtest("Scenario: Simple plugin lifecycle tests.", sub {
-  plan tests => 3;
+  plan tests => 4;
 
   my $plugin = Koha::Plugin::Fi::Hypernova::EmailAsUserid->new(); #This implicitly calls install()
 
@@ -75,6 +76,32 @@ subtest("Scenario: Simple plugin lifecycle tests.", sub {
     ok($plugin->configure(), "Loading the configure-view");
     is(t::Lib::htmlStatus(), 200, "Status '200'");
     ok(t::Lib::htmlContains(qr!<input type="hidden" name="csrf_token" value=".+?" />!), "CSRF-token included");
+  });
+
+  subtest("Save the plugin configuration", sub {
+    plan tests => 6;
+
+    $plugin->{cgi} = FakeCGI->new(
+      HTTP::Request::Common::POST(
+        $t::Lib::DEFAULT_URL,
+        Content => [
+          class => "Koha::Plugin::Fi::Hypernova::EmailAsUserid",
+          method => "configure",
+          save => "1",
+          force_email => "1",
+          email => "1",
+          card => "1",
+        ],
+      ),
+    );
+    ok($plugin->configure(), "Loading the configure-view");
+    is(t::Lib::htmlStatus(), 200, "Status '200'");
+    ok(t::Lib::htmlContains(qr!<input type="hidden" name="csrf_token" value=".+?" />!), "CSRF-token included");
+
+    my $c = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($plugin);
+    is($c->{force_email}, 1, "Configuration 'force_email' is set to 1");
+    is($c->{email}, 1, "Configuration 'email' is set to 1");
+    is($c->{card}, 1, "Configuration 'card' is set to 1");
   });
 });
 

@@ -15,17 +15,18 @@
     [% INCLUDE 'csrf-token.inc' %]
     <input type="hidden" name="class" value="[% CLASS %]"/>
     <input type="hidden" name="method" value="configure"/>
+    <input type="hidden" name="save" value="1"/>
 
     <fieldset>
       <legend>Force userid</legend>
-      <input disabled type="checkbox" name="force_email" id="force_email" value="1" [% IF force_email %]checked="checked"[% END %]>
+      <input type="checkbox" name="force_email" id="force_email" value="1" [% IF config.force_email %]checked="checked"[% END %]>
       <label for="force_email"> Force email as userid</label><br>
     </fieldset>
     <fieldset>
       <legend>OPAC identification method</legend>
-      <input disabled type="checkbox" name="email" id="email" value="1" [% IF enabled %]checked="checked"[% END %]>
+      <input type="checkbox" name="email" id="email" value="1" [% IF config.email %]checked="checked"[% END %]>
       <label for="email"> Email</label><br>
-      <input type="checkbox" name="card" id="card" value="1" [% IF enabled %]checked="checked"[% END %]>
+      <input type="checkbox" name="card" id="card" value="1" [% IF config.card %]checked="checked"[% END %]>
       <label for="card"> Card</label><br>
     </fieldset>
 

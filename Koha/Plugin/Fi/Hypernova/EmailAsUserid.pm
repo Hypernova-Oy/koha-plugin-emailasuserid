@@ -69,8 +69,8 @@ sub loadAssets {
   $assets{'opac'} =
     "<script>\n".
     Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($self)->asJavascript()."\n".
-    File::Slurp::read_file($self->_absPath('js/lib.js'))."\n".
-    File::Slurp::read_file($self->_absPath('js/opac.js'))."\n".
+    File::Slurp::read_file($self->_absPath('js/lib.js'), { binmode => ':encoding(UTF-8)' })."\n".
+    File::Slurp::read_file($self->_absPath('js/opac.js'), { binmode => ':encoding(UTF-8)' })."\n".
     "</script>\n";
 
   $assets{'/cgi-bin/koha/members/memberentry.pl'} =
