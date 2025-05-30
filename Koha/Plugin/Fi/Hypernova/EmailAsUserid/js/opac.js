@@ -38,7 +38,7 @@ if (kpfheauid_bopu) {
   });
 }
 
-let kpfheauid_localLogins = document.querySelectorAll('div.local-login');
+let kpfheauid_localLogins = document.querySelectorAll('div.local-login, div#login');
 if (kpfheauid_localLogins) {
   document.addEventListener("DOMContentLoaded", function () {
     let useridTranslation = kpfheauid_getUseridFieldTranslation();
