@@ -66,6 +66,10 @@ sub asJavascript {
       "  pending_self_registrations_categorycode: '".C4::Context->preference('PatronSelfRegistrationDefaultCategory')."',\n" :
       ""
     ).
+    ($self->{pending_self_registrations} ?
+      "  pending_self_registrations_report_id: ".($self->{pending_self_registrations_report_id} // 'null').",\n" :
+      ""
+    ).
     "};\n";
 }
 
