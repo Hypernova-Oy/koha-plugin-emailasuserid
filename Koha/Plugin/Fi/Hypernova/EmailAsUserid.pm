@@ -113,7 +113,8 @@ Generates JavaScript to bind the email field as the user ID field in the patron 
 
 sub intranet_js {
   my ($self) = @_;
-  return $assets{$self->{'cgi'}->script_name};
+  require Encode;
+  return Encode::decode('UTF-8', $assets{$self->{'cgi'}->script_name});
 }
 
 =head2 opac_js
