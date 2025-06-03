@@ -6,6 +6,7 @@ if (kpfheauid_config.pending_self_registrations_categorycode) {
       $.ajax({
         url: '/api/v1/patrons?_page=1&_per_page=20&q={"-and":[[{"me.category_id":"'+kpfheauid_config.pending_self_registrations_categorycode+'"}]]}&_match=contains&_order_by=+me.surname,+me.preferred_name,+me.firstname,+me.middle_name,+me.othernames,+me.street_number,+me.address,+me.address2,+me.city,+me.state,+me.postal_code,+me.country'
       }).done(function(data) {
+        if (data.length === 0) { return; }
         let kpfheauid_sr_translation;
         if (document.documentElement.lang === "en") {
           kpfheauid_sr_translation = "Pending self-registrations";
