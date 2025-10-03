@@ -11,6 +11,13 @@
 <div id="doc3">
   <h3>Koha: EmailAsUserid Plugin: Configuration</h3>
 
+  [% IF error %]
+  <div class="alert alert-warning">
+    <h4>Error!</h4>
+    <p>[% error %]</p>
+  </div>
+  [% END %]
+
   <form method="post" action="/cgi-bin/koha/plugins/run.pl">
     [% INCLUDE 'csrf-token.inc' %]
     <input type="hidden" name="class" value="[% CLASS %]"/>

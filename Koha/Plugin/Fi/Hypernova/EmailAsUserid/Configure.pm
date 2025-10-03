@@ -56,8 +56,21 @@ sub configure {
     $plugin->output_html( $template->output(), 200 );
   };
   if ($@) {
-    warn 'Koha::Plugin::Fi::Hypernova::EmailAsUserid:> '.$@;
-    $plugin->output_html( $@, 500 );
+    my $error = $@;
+    warn 'Koha::Plugin::Fi::Hypernova::EmailAsUserid:> '.$error;
+    eval {
+      my $config = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($plugin);
+      my $template = $plugin->get_template( { file => $plugin->_absPath('configure.tt') } );
+      $template->param(
+        config => $config,
+        error => $error,
+      );
+      $plugin->output_html( $template->output(), 200 );
+    };
+    if ($@) {
+      warn 'Koha::Plugin::Fi::Hypernova::EmailAsUserid:> '.$@;
+      $plugin->output_html( $@, 500 );
+    }
   }
   return 1;
 }
