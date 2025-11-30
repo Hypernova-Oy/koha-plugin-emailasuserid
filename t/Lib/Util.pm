@@ -79,7 +79,17 @@ sub decorate_marcxml_for_signum_and_bib_class {
 
 #Mock the directory Koha looks for plugins to be this Plugin's dev source code dir
 sub MockPluginsdir {
-  $C4::Context::context->{config}->{config}->{pluginsdir} = Cwd::abs_path(File::Spec->catfile(__FILE__,'..','..','..'));
+  if ($C4::Context::context->{config}->{config}->{pluginsdir}) {
+    push(
+      @{$C4::Context::context->{config}->{config}->{pluginsdir}},
+      Cwd::abs_path(File::Spec->catfile(__FILE__,'..','..','..'))
+    );
+  }
+  else {
+    $C4::Context::context->{config}->{config}->{pluginsdir} = [
+      Cwd::abs_path(File::Spec->catfile(__FILE__,'..','..','..'))
+    ]
+  }
 }
 
 my @randomStringChars = ('A'..'Z', 'a'..'z', '0'..'9');  # Alphanumeric characters

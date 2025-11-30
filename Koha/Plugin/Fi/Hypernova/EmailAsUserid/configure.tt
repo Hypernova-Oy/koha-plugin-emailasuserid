@@ -27,7 +27,9 @@
     <fieldset>
       <legend>Features</legend>
       <input type="checkbox" name="force_email" id="force_email" value="1" [% IF config.force_email %]checked="checked"[% END %]>
-      <label for="force_email"> Force email as userid</label><br>
+      <label for="force_email"> Force email as borrowers.userid</label><br>
+      <input type="checkbox" name="hide_branchcode_selection" id="hide_branchcode_selection" value="1" [% IF config.hide_branchcode_selection %]checked="checked"[% END %]>
+      <label for="hide_branchcode_selection"> Hide library selection from OPAC Patron registration</label><br>
       <input type="checkbox" name="pending_self_registrations" id="pending_self_registrations" value="1" [% IF config.pending_self_registrations %]checked="checked"[% END %]>
       <label for="pending_self_registrations"> Show pending self-registrations in the intranet frontpage</label><br>
       <input type="hidden" name="pending_self_registrations_report_id" id="pending_self_registrations_report_id" value="[% config.pending_self_registrations_report_id %]"/>
@@ -38,6 +40,8 @@
       <label for="email"> Email</label><br>
       <input type="checkbox" name="card" id="card" value="1" [% IF config.card %]checked="checked"[% END %]>
       <label for="card"> Card</label><br>
+      <input type="checkbox" name="studentcard" id="studentcard" value="1" [% IF config.studentcard %]checked="checked"[% END %]>
+      <label for="studentcard"> Rebrand borrowers.cardnumber as student card</label><br>
     </fieldset>
 
     <input type="submit" value="Submit">

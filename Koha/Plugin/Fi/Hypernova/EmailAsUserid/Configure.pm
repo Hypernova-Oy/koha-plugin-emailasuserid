@@ -24,6 +24,7 @@ use warnings;
 use C4::Log;
 use C4::Reports::Guided;
 use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration;
+use Koha::Plugin::Fi::Hypernova::EmailAsUserid::PendingSelfRegistrationsReport;
 
 #Controller
 sub configure {
@@ -37,12 +38,7 @@ sub configure {
     if ($cgi->param('save')) {
       my $newConfig = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromCGI($cgi);
 
-      if ($newConfig->{pending_self_registrations}) {
-        $newConfig->{pending_self_registrations_report_id} = createPendingSelfRegistrationsReport($plugin);
-      } else {
-        C4::Reports::Guided::delete_report($newConfig->{pending_self_registrations_report_id}) if $newConfig->{pending_self_registrations_report_id};
-        delete $newConfig->{pending_self_registrations_report_id};
-      }
+      Koha::Plugin::Fi::Hypernova::EmailAsUserid::PendingSelfRegistrationsReport::setState($plugin, $newConfig);
 
       $config = $newConfig->store($plugin);
       C4::Log::logaction('EmailAsUserid', 'configure', undef, $config->serialize(), undef, undef);
@@ -73,25 +69,6 @@ sub configure {
     }
   }
   return 1;
-}
-
-sub createPendingSelfRegistrationsReport {
-  my ($plugin) = @_;
-
-  if (my $patronSelfRegistrationDefaultCategory = C4::Context->preference('PatronSelfRegistrationDefaultCategory')) {
-    my $id = C4::Reports::Guided::save_report({
-      borrowernumber => C4::Context->userenv ? C4::Context->userenv->{'borrowernumber'} : undef,
-      sql => "SELECT borrowernumber, firstname, surname, dateenrolled, updated_on FROM borrowers WHERE categorycode='$patronSelfRegistrationDefaultCategory'",
-      name => 'Pending Self-registrations',
-      area => undef,
-      group => 'plugins',
-      subgroup => undef,
-      cache_expiry => undef,
-      public => undef,
-    });
-    die "Failed to create pending self-registrations report: $@" unless $id;
-    return $id;
-  }
 }
 
 1;

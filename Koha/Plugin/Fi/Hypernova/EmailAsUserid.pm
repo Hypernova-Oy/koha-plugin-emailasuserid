@@ -27,8 +27,11 @@ use Mojo::JSON qw(decode_json);
 use YAML;
 use Try::Tiny;
 
+use C4::Languages;
+
 use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configure;
 use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration;
+use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Installer;
 
 our $VERSION = '0.0.1'; #PLACEHOLDER
 our $DATE_UPDATED = '2025-05-28'; #PLACEHOLDER
@@ -59,6 +62,7 @@ sub new {
   my $self = $class->SUPER::new($args);
   $self->{cgi} = CGI->new() unless $self->{cgi};
 
+  $self->{config} = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($self);
   $self->loadAssets();
 
   return $self;
@@ -68,28 +72,28 @@ sub loadAssets {
   my ($self) = @_;
   $assets{'opac'} =
     "<script>\n".
-    Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($self)->asJavascript()."\n".
+    $self->{config}->asJavascript()."\n".
     File::Slurp::read_file($self->_absPath('js/lib.js'), { binmode => ':encoding(UTF-8)' })."\n".
     File::Slurp::read_file($self->_absPath('js/opac.js'), { binmode => ':encoding(UTF-8)' })."\n".
     "</script>\n";
 
   $assets{'/intranet/members/memberentry.pl'} =
     "<script>\n".
-    Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($self)->asJavascript()."\n".
+    $self->{config}->asJavascript()."\n".
     File::Slurp::read_file($self->_absPath('js/lib.js'))."\n".
     File::Slurp::read_file($self->_absPath('js/memberentry.js'))."\n".
     "</script>\n";
 
   $assets{'/intranet/mainpage.pl'} =
     "<script>\n".
-    Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($self)->asJavascript()."\n".
+    $self->{config}->asJavascript()."\n".
     File::Slurp::read_file($self->_absPath('js/lib.js'))."\n".
     File::Slurp::read_file($self->_absPath('js/mainpage.js'))."\n".
     "</script>\n";
 }
 
-sub install { return 1; }
-sub uninstall { return 1; }
+sub install { return Koha::Plugin::Fi::Hypernova::EmailAsUserid::Installer::install(@_); }
+sub uninstall { return Koha::Plugin::Fi::Hypernova::EmailAsUserid::Installer::uninstall(@_); }
 sub configure { return Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configure::configure(@_); }
 
 =head2 patron_generate_userid
@@ -129,6 +133,11 @@ sub opac_js {
   return $assets{'opac'};
 }
 
+sub _lang {
+  my ($self) = @_;
+  return $self->{_lang} if $self->{_lang};
+  $self->{_lang} = C4::Languages::getlanguage($self->{cgi});
+}
 sub _absPath {
   my ($self, $file) = @_;
 

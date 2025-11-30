@@ -32,13 +32,18 @@ use Test::More tests => 1;
 use Test::Deep;
 use Test::Mojo;
 
+use Koha::Plugins;
+
 use Koha::Plugin::Fi::Hypernova::EmailAsUserid;
 use Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration;
 
 use t::Lib qw(Koha::Plugin::Fi::Hypernova::EmailAsUserid);
+use t::Lib::Util;
 
 use HTTP::Request::Common qw();
 use HTTP::Headers;
+
+t::Lib::Util::MockPluginsdir();
 
 subtest("Scenario: Simple plugin lifecycle tests.", sub {
   plan tests => 4;
@@ -48,13 +53,15 @@ subtest("Scenario: Simple plugin lifecycle tests.", sub {
   subtest("Make sure the plugin is uninstalled", sub {
     plan tests => 1;
 
-    $plugin->uninstall(); #So we have to install/upgrade + uninstall the plugin.
+    $plugin->uninstall();
+    Koha::Plugins->RemovePlugins({plugin_class => 'Koha::Plugin::Fi::Hypernova::EmailAsUserid', destructive => 1, disable => 1});
     ok(!$plugin->retrieve_data('__INSTALLED__'), "Uninstalled");
   });
 
   subtest("Install the plugin", sub {
     plan tests => 1;
 
+    Koha::Plugins->new->InstallPlugins( { verbose => 0 } );
     $plugin->install();
     ok($plugin->retrieve_data('__INSTALLED__'), "Installed");
   });
@@ -91,6 +98,7 @@ subtest("Scenario: Simple plugin lifecycle tests.", sub {
           force_email => "1",
           email => "1",
           card => "1",
+          op => '', #C4::Auth.om:189 throws undefined error if op is missing on POST requests
         ],
       ),
     );

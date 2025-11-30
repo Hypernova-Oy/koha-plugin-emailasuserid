@@ -27,7 +27,7 @@ use JSON::XS;
 
 sub new {
   my ($class, $args) = @_;
-  $args = {force_email => 1, email => 1, pending_self_registrations => 1} unless ($args && ref($args) eq 'HASH');
+  die "No args given!" unless ($args && ref($args) eq 'HASH');
   my $self = bless($args, $class);
 
   return $self;
@@ -36,10 +36,13 @@ sub new {
 sub newFromCGI {
   my ($class, $cgi) = @_;
   my $args = {};
-  $args->{force_email} = $cgi->param('force_email') ? 1 : 0;
   $args->{card}  = $cgi->param('card') ? 1 : 0;
   $args->{email} = $cgi->param('email') ? 1 : 0;
+  $args->{force_email} = $cgi->param('force_email') ? 1 : 0;
+  $args->{hide_branchcode_selection} = $cgi->param('hide_branchcode_selection') ? 1 : 0;
   $args->{pending_self_registrations} = $cgi->param('pending_self_registrations') ? 1 : 0;
+  $args->{pending_self_registrations_report_id} = $cgi->param('pending_self_registrations_report_id');
+  $args->{studentcard}  = $cgi->param('studentcard') ? 1 : 0;
 
   if ($args->{pending_self_registrations}) {
     unless(C4::Context->preference('PatronSelfRegistrationDefaultCategory')) {
@@ -54,7 +57,7 @@ sub newFromDatabase {
   my ($class, $plugin) = @_;
   my $serialized = $plugin->retrieve_data('config');
   return $class->deserialize($serialized) if $serialized;
-  return $class->new();
+  return $class->new({});
 }
 
 sub asJavascript {
@@ -62,14 +65,15 @@ sub asJavascript {
   return
     "const kpfheauid_config = {\n".
     "  card: ".($self->{card} ? 'true' : 'false').",\n".
+    "  email: ".($self->{email} ? 'true' : 'false').",\n".
+    "  force_email: ".($self->{force_email} ? 'true' : 'false').",\n".
+    "  hide_branchcode_selection: ".($self->{hide_branchcode_selection} ? 'true' : 'false').",\n".
     ($self->{pending_self_registrations} ?
-      "  pending_self_registrations_categorycode: '".C4::Context->preference('PatronSelfRegistrationDefaultCategory')."',\n" :
-      ""
-    ).
-    ($self->{pending_self_registrations} ?
+      "  pending_self_registrations_categorycode: '".C4::Context->preference('PatronSelfRegistrationDefaultCategory')."',\n".
       "  pending_self_registrations_report_id: ".($self->{pending_self_registrations_report_id} // 'null').",\n" :
       ""
     ).
+    "  studentcard: ".($self->{studentcard} ? 'true' : 'false').",\n".
     "};\n";
 }
 
