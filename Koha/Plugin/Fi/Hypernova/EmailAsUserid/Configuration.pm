@@ -68,11 +68,8 @@ sub asJavascript {
     "  email: ".($self->{email} ? 'true' : 'false').",\n".
     "  force_email: ".($self->{force_email} ? 'true' : 'false').",\n".
     "  hide_branchcode_selection: ".($self->{hide_branchcode_selection} ? 'true' : 'false').",\n".
-    ($self->{pending_self_registrations} ?
-      "  pending_self_registrations_categorycode: '".C4::Context->preference('PatronSelfRegistrationDefaultCategory')."',\n".
-      "  pending_self_registrations_report_id: ".($self->{pending_self_registrations_report_id} // 'null').",\n" :
-      ""
-    ).
+    "  pending_self_registrations_categorycode: '".(C4::Context->preference('PatronSelfRegistrationDefaultCategory') // 'null')."',\n".
+    "  pending_self_registrations_report_id: ".($self->{pending_self_registrations_report_id} // 'null').",\n".
     "  studentcard: ".($self->{studentcard} ? 'true' : 'false').",\n".
     "};\n";
 }
