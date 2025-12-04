@@ -33,6 +33,8 @@
       <input type="checkbox" name="pending_self_registrations" id="pending_self_registrations" value="1" [% IF config.pending_self_registrations %]checked="checked"[% END %]>
       <label for="pending_self_registrations"> Show pending self-registrations in the intranet frontpage</label><br>
       <input type="hidden" name="pending_self_registrations_report_id" id="pending_self_registrations_report_id" value="[% config.pending_self_registrations_report_id %]"/>
+      <input type="checkbox" name="sco_refresher" id="sco_refresher" value="1" disabled="true" [% IF config.sco_refresher %]checked="checked"[% END %]>
+      <label for="sco_refresher">Enabled if syspref WebBasedSelfCheck is set. SCO module refresher hotfix (Bug 36586 - Self-checkouts will get CSRF errors if left inactive for 8 hours) (Syspref 'timeout' kills SCO autologin)</label><br>
     </fieldset>
     <fieldset>
       <legend>OPAC identification method</legend>

@@ -31,6 +31,14 @@ our %assets = (
       File::Slurp::read_file($_[0]->_absPath('js/opac.js'), { binmode => ':encoding(UTF-8)' })."\n"
     );
   },
+  '/opac/sco/sco-main.pl' => sub {
+    return _HTMLScriptElement($_[0],
+      $_[0]->config->asJavascript()."\n".
+      File::Slurp::read_file($_[0]->_absPath('js/lib.js'))."\n".
+      File::Slurp::read_file($_[0]->_absPath('js/sco-main.js'))."\n"
+    ) if ($_[0]->config->{sco_refresher});
+    return '';
+  },
   '/intranet/members/memberentry.pl' => sub {
     return _HTMLScriptElement($_[0],
       $_[0]->config->asJavascript()."\n".
@@ -55,6 +63,9 @@ sub intranet_js {
 
 sub opac_js {
   my ($plugin) = @_;
+  if ($assets{$plugin->{'cgi'}->script_name}) {
+    return $assets{$plugin->{'cgi'}->script_name}->($plugin);
+  }
   return $assets{'opac'}->($plugin);
 }
 

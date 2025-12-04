@@ -42,7 +42,8 @@ sub newFromCGI {
   $args->{hide_branchcode_selection} = $cgi->param('hide_branchcode_selection') ? 1 : 0;
   $args->{pending_self_registrations} = $cgi->param('pending_self_registrations') ? 1 : 0;
   $args->{pending_self_registrations_report_id} = $cgi->param('pending_self_registrations_report_id');
-  $args->{studentcard}  = $cgi->param('studentcard') ? 1 : 0;
+  $args->{sco_refresher} = $cgi->param('sco_refresher') ? 1 : 0;
+  $args->{studentcard} = $cgi->param('studentcard') ? 1 : 0;
 
   if ($args->{pending_self_registrations}) {
     unless(C4::Context->preference('PatronSelfRegistrationDefaultCategory')) {
@@ -70,6 +71,7 @@ sub asJavascript {
     "  hide_branchcode_selection: ".($self->{hide_branchcode_selection} ? 'true' : 'false').",\n".
     "  pending_self_registrations_categorycode: '".(C4::Context->preference('PatronSelfRegistrationDefaultCategory') // 'null')."',\n".
     "  pending_self_registrations_report_id: ".($self->{pending_self_registrations_report_id} // 'null').",\n".
+    "  sco_refresher: ".($self->{sco_refresher} ? 'true' : 'false').",\n".
     "  studentcard: ".($self->{studentcard} ? 'true' : 'false').",\n".
     "};\n";
 }

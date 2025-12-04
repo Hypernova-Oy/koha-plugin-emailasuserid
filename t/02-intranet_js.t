@@ -41,7 +41,7 @@ use HTTP::Request::Common qw();
 use HTTP::Headers;
 
 subtest("Scenario: Simple plugin lifecycle tests.", sub {
-  plan tests => 5;
+  plan tests => 6;
 
   ok(t::Lib::Mocks::mock_preference('PatronSelfRegistrationDefaultCategory', 'SELF'), "Mock preference 'PatronSelfRegistrationDefaultCategory' to 'SELF'");
   my $plugin = Koha::Plugin::Fi::Hypernova::EmailAsUserid->new(); #This implicitly calls install()
@@ -70,6 +70,26 @@ subtest("Scenario: Simple plugin lifecycle tests.", sub {
     like($js, qr!Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/lib.js!, "Javascript contains the plugin js/lib.js");
     like($js, qr!Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/opac.js!, "Javascript contains the plugin js/opac.js");
     like($js, qr/body#opac-patron-update/, "Javascript contains the correct selector");
+  });
+
+  subtest("opac_js for sco/sco-main.pl", sub {
+    plan tests => 10;
+
+    $plugin->{cgi} = FakeCGI->new(HTTP::Request::Common::GET('/opac/sco/sco-main.pl'));
+    ok(t::Lib::Mocks::mock_preference('WebBasedSelfCheck', 1), "Mock preference 'WebBasedSelfCheck' enabled");
+    ok($plugin = Koha::Plugin::Fi::Hypernova::EmailAsUserid->new(), "Plugin reloaded");
+
+    my $js = $plugin->opac_js();
+    ok($js, "Loading the javascript");
+    like($js, qr!const kpfheauid_config!, "Javascript contains the plugin config");
+    like($js, qr!Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/lib.js!, "Javascript contains the plugin js/lib.js");
+    like($js, qr!Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/sco-main.js!, "Javascript contains the plugin js/sco-main.js");
+    like($js, qr/body#sco_main.CheckingOut/, "Javascript contains the correct selector");
+
+    ok(t::Lib::Mocks::mock_preference('WebBasedSelfCheck', 0), "Mock preference 'WebBasedSelfCheck' disabled");
+    ok($plugin = Koha::Plugin::Fi::Hypernova::EmailAsUserid->new(), "Plugin reloaded");
+    $js = $plugin->opac_js();
+    is($js, '', "Loading the javascript returns empty string");
   });
 
   subtest("intranet_js for memberentry.pl", sub {

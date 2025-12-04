@@ -34,7 +34,7 @@ sub configure {
   eval {
     my $template = $plugin->get_template( { file => $plugin->_absPath('configure.tt') } );
 
-    my $config = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($plugin);
+    my $config = $plugin->config;
     if ($cgi->param('save')) {
       my $newConfig = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromCGI($cgi);
 

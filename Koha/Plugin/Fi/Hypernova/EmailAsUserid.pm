@@ -64,6 +64,7 @@ sub new {
   $self->{cgi} = CGI->new() unless $self->{cgi};
 
   $self->{config} = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromDatabase($self);
+  $self->{config}->{sco_refresher} = C4::Context->preference("WebBasedSelfCheck");
 
   return $self;
 }
