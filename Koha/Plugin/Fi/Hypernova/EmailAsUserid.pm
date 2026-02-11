@@ -24,7 +24,6 @@ use base qw(Koha::Plugins::Base);
 use Cwd;
 use File::Slurp;
 use Mojo::JSON qw(decode_json);
-use YAML;
 use Try::Tiny;
 
 use C4::Languages;
