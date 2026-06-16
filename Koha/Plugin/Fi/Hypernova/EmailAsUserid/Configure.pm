@@ -37,9 +37,6 @@ sub configure {
     my $config = $plugin->config;
     if ($cgi->param('save')) {
       my $newConfig = Koha::Plugin::Fi::Hypernova::EmailAsUserid::Configuration->newFromCGI($cgi);
-
-      Koha::Plugin::Fi::Hypernova::EmailAsUserid::PendingSelfRegistrationsReport::setState($plugin, $newConfig);
-
       $config = $newConfig->store($plugin);
       C4::Log::logaction('EmailAsUserid', 'configure', undef, $config->serialize(), undef, undef);
     }

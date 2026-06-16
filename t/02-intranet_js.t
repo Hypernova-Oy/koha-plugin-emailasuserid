@@ -41,7 +41,7 @@ use HTTP::Request::Common qw();
 use HTTP::Headers;
 
 subtest("Scenario: Simple plugin lifecycle tests.", sub {
-  plan tests => 6;
+  plan tests => 5;
 
   ok(t::Lib::Mocks::mock_preference('PatronSelfRegistrationDefaultCategory', 'SELF'), "Mock preference 'PatronSelfRegistrationDefaultCategory' to 'SELF'");
   my $plugin = Koha::Plugin::Fi::Hypernova::EmailAsUserid->new(); #This implicitly calls install()
@@ -103,19 +103,6 @@ subtest("Scenario: Simple plugin lifecycle tests.", sub {
     like($js, qr!Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/lib.js!, "Javascript contains the plugin js/lib.js");
     like($js, qr!Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/memberentry.js!, "Javascript contains the plugin js/memberentry.js");
     like($js, qr/body#pat_memberentrygen/, "Javascript contains the correct selector");
-  });
-
-  subtest("intranet_js for mainpage.pl 'pending_self_registrations'", sub {
-    plan tests => 6;
-
-    $plugin->{cgi} = FakeCGI->new(HTTP::Request::Common::GET('/intranet/mainpage.pl'));
-
-    ok(my $js = $plugin->intranet_js(), "Loading the javascript");
-    like($js, qr!const kpfheauid_config!, "Javascript contains the plugin config");
-    like($js, qr!Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/lib.js!, "Javascript contains the plugin js/lib.js");
-    like($js, qr!Koha::Plugin::Fi::Hypernova::EmailAsUserid/js/mainpage.js!, "Javascript contains the plugin js/mainpage.js");
-    like($js, qr/body#main_intranet-main/, "Javascript contains the correct selector");
-    like($js, qr/pending_self_registrations_categorycode: ['"]SELF['"]/, "Javascript contains the pending_self_registrations_categorycode");
   });
 });
 
